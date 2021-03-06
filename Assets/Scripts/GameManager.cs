@@ -1,26 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public int PlayerMaxLives;
     private int playerCurrentLives;
-    private Vector3 spawnPosition;
     public int StarsQuantity;
+    private GameObject nicknameMenu;
     private GameObject player;
-
+    private GameObject heart;
+    private LevelTimer timer;
+    private HighScoreTableWriter tableWriter;
+    public GameObject respawnMenu;
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        spawnPosition = player.transform.position;
-
+        nicknameMenu = FindObjectOfType<NicknameScipr>().gameObject;
+        nicknameMenu.SetActive(false);
+        heart = GameObject.FindGameObjectWithTag("Heart");
+        heart.SetActive(false);
         var stars = GameObject.FindGameObjectsWithTag("Star");
         StarsQuantity = stars.Length;
 
+        timer = GetComponent<LevelTimer>();
+
+        tableWriter = GetComponent<HighScoreTableWriter>();
+
         playerCurrentLives = PlayerMaxLives;
     }
-
     public void StarPickup()
     {
         StarsQuantity--;
@@ -28,6 +37,12 @@ public class GameManager : MonoBehaviour
         {
             //complete level
             Debug.Log("Level complete");
+            GameEnd(true);
+        }
+        if (StarsQuantity == 1)
+        {
+            //activate heart
+            ActivateHeart();
         }
     }
     public void PlayerHurt()
@@ -35,13 +50,14 @@ public class GameManager : MonoBehaviour
         playerCurrentLives--;
         if (playerCurrentLives > 0)
         {
-            player.transform.position = spawnPosition;
-            player.GetComponent<PlayerController>().Respawn();
+            player.SetActive(false);
+            respawnMenu.SetActive(true);
         }
         else
         {
             //player dead
             Object.Destroy(player);
+            GameEnd(false);
         }
     }
 
@@ -57,6 +73,8 @@ public class GameManager : MonoBehaviour
         {
             enemy.GetComponent<EnemyController>().EnemyPause();
         }
+
+        timer.switchStates();
     }
     public void ResumeGame()
     {
@@ -70,5 +88,32 @@ public class GameManager : MonoBehaviour
         {
             enemy.GetComponent<EnemyController>().EnemyUnpause();
         }
+
+        timer.switchStates();
+    }
+
+    public void GameEnd(bool result)
+    {
+        if (result)
+        {
+            PauseGame();
+            player.SetActive(false);
+            //запустить окно ввода никнейма
+            nicknameMenu.SetActive(true);
+        }
+    }
+    public void LogPlayerStats(string name)
+    {
+        Debug.Log(name + " " + timer.levelTime);
+        tableWriter.WritePlayerStats(name, timer.levelTime);
+        SceneManager.LoadScene("HighScoreScene");
+    }
+    public void HeartPickup()
+    {
+        playerCurrentLives++;
+    }
+    public void ActivateHeart()
+    {
+        heart.SetActive(true);
     }
 }

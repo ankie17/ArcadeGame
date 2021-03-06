@@ -15,26 +15,38 @@ public class PlayerController : MonoBehaviour
 {
 
     public float MoveSpeed = 5.0f;
+    private Vector3 spawnPosition;
     private States currentState = States.Start;
     private States previousState;
     private float horizontalInput;
     private float verticalInput;
 
+    private void Start()
+    {
+        spawnPosition = transform.position;
+    }
     public void PausePlayer()
     {
-        previousState = currentState;
-        currentState = States.Pause;
+        if (currentState != States.Pause)
+        {
+            previousState = currentState;
+            currentState = States.Pause;
+        }
     }
 
     public void Respawn()
     {
         currentState = States.Start;
+        transform.position = spawnPosition;
     }
 
     public void UnpausePlayer()
     {
-        currentState = previousState;
-        previousState = States.Pause;
+        if (currentState == States.Pause)
+        {
+            currentState = previousState;
+            previousState = States.Pause;
+        }
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -70,18 +82,26 @@ public class PlayerController : MonoBehaviour
         Vector3 moveVector = Vector3.zero;
         if (currentState == States.Top)
         {
+            Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+            transform.rotation = rotation;
             moveVector = Vector3.up;
         }
         if (currentState == States.Down)
         {
+            Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, 270));
+            transform.rotation = rotation;
             moveVector = Vector3.down;
         }
         if (currentState == States.Left)
         {
+            Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, 180));
+            transform.rotation = rotation;
             moveVector = Vector3.left;
         }
         if (currentState == States.Right)
         {
+            Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+            transform.rotation = rotation;
             moveVector = Vector3.right;
         }
 

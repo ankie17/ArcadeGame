@@ -1,0 +1,8 @@
+bob 97
+bob 67
+ann 96
+ann 70
+illia 1,258301
+lol 3,719326
+anki 2,810588
+anki 2,447577
