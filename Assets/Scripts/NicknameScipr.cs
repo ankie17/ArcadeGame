@@ -12,7 +12,7 @@ public class NicknameScipr : MonoBehaviour
     {
         string nickname = inputField.text;
         Debug.Log($"Player name is {nickname}");
-        FindObjectOfType<GameManager>().LogPlayerStats(nickname);
+        GameManager.Instance.LogPlayerStats(nickname);
 
         gameObject.SetActive(false);
     }

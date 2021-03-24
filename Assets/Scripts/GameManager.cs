@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private static GameManager instance;
     public int PlayerMaxLives;
     private int playerCurrentLives;
     public int StarsQuantity;
@@ -14,6 +15,19 @@ public class GameManager : MonoBehaviour
     private LevelTimer timer;
     private HighScoreTableWriter tableWriter;
     public GameObject respawnMenu;
+    public static GameManager Instance { get { return instance; } }
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");

@@ -11,16 +11,17 @@ public class EnemyController : MonoBehaviour
     private int direction;
     private Transform enemyTransform;
     private Vector3[] vectorsArray;
+    private Animator animator;
     // Start is called before the first frame update
     enum EnemyStates
     {
         Move = 0,
         Pause
     }
-    private EnemyStates currentState = 0;
+    private EnemyStates currentState = EnemyStates.Move;
     void Start()
     {
-  
+        animator = GetComponent<Animator>();
         speedDelta = MoveSpeed * Time.fixedDeltaTime;
         currentPointID = 0;
         enemyTransform = GetComponent<Transform>();
@@ -37,13 +38,6 @@ public class EnemyController : MonoBehaviour
         enemyTransform.position = vectorsArray[0];
         
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void FixedUpdate()
     {
         if (currentState == EnemyStates.Move)
@@ -70,33 +64,24 @@ public class EnemyController : MonoBehaviour
     }
     public void EnemyPause()
     {
+        Debug.Log("Pause");
         currentState = EnemyStates.Pause;
     }
     public void EnemyUnpause()
     {
+        Debug.Log("Unpause");
         currentState = EnemyStates.Move;
     }
     private void Move()
     {
-        LookAt2D(transform, vectorsArray[currentPointID]);
         enemyTransform.position = Vector3.MoveTowards(enemyTransform.position, vectorsArray[currentPointID], speedDelta);
-    }
-    void LookAt2D(Transform me, Vector3 target)
-    {
-        float signedAngle = Vector2.SignedAngle(me.up, target - me.position);
-
-        if (Mathf.Abs(signedAngle) >= 1e-3f)
-        {
-            var angles = me.eulerAngles;
-            angles.z += signedAngle;
-            me.eulerAngles = angles;
-        }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Player")
         {
-            FindObjectOfType<GameManager>().PlayerHurt();
+            GameManager.Instance.PlayerHurt();
+            animator.SetTrigger("Attack");
             Debug.Log("Enemy collided with player");
         }
     }
