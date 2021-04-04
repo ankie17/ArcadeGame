@@ -15,6 +15,11 @@ public class WallChecker : MonoBehaviour
     public bool Left;
     public bool Right;
 
+    private void Start()
+    {
+        
+    }
+
     private void FixedUpdate()
     {
 

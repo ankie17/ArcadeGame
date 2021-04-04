@@ -7,6 +7,12 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class LevelBuilder : MonoBehaviour
 {
+    public enum LevelBuilderMode
+    {
+        Manual,
+        Request
+    }
+    public LevelBuilderMode builderMode = LevelBuilderMode.Manual;
     public const int LEVEL_SIZE = 20;
     private int[,] levelMatrix;
     public string MatrixString = "";
@@ -21,7 +27,10 @@ public class LevelBuilder : MonoBehaviour
         startPos = transform.position;
         levelMatrix = new int[LEVEL_SIZE, LEVEL_SIZE];
         //нужно вызвать метод парсинга и наполнить матрицу
-        //LevelRequest();
+        if (builderMode == LevelBuilderMode.Request)
+        {
+            LevelRequest();
+        }
         //далее нужно проитерироваться по ней и построить уровень
         ParseMatrix();
         GeneratePickupCoordinates();
@@ -50,14 +59,14 @@ public class LevelBuilder : MonoBehaviour
 
     void LevelRequest()
     {
-        var url = "http://127.0.0.1:5000/get_level";
+        var url = "https://pacman-level-generator.herokuapp.com/get_level";
 
         var httpRequest = (HttpWebRequest)WebRequest.Create(url);
         httpRequest.Method = "POST";
 
         httpRequest.ContentType = "application/x-www-form-urlencoded";
 
-        var data = "level=hard";
+        var data = "level=easy";
 
         using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
         {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 enum States
 {   
-    Start = 0,
+    Idle = 0,
     Pause,
     Right,
     Left,
@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     public float MoveSpeed = 5.0f;
     private Vector3 spawnPosition;
-    private States currentState = States.Start;
+    private States currentState = States.Idle;
     private States previousState;
     private float horizontalInput;
     private float verticalInput;
@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     private bool walking;
     private int stateID;
     private Animator animator;
+    public GameObject PlayerDeathPrefab;
     private void Start()
     {
         animator = GetComponentInChildren<Animator>();
@@ -37,6 +38,7 @@ public class PlayerController : MonoBehaviour
     {
         if (currentState != States.Pause)
         {
+            animator.speed = 0;
             previousState = currentState;
             currentState = States.Pause;
         }
@@ -44,7 +46,8 @@ public class PlayerController : MonoBehaviour
 
     public void Respawn()
     {
-        currentState = States.Start;
+        gameObject.SetActive(true);
+        currentState = States.Idle;
         transform.position = spawnPosition;
     }
 
@@ -52,9 +55,23 @@ public class PlayerController : MonoBehaviour
     {
         if (currentState == States.Pause)
         {
+            animator.speed = 1;
             currentState = previousState;
             previousState = States.Pause;
         }
+    }
+    public void PlayDead(bool canRespawn)
+    {
+        if (canRespawn)
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        var s = Instantiate(PlayerDeathPrefab, this.transform.position, Quaternion.identity);
+        Destroy(s, 1.0f);
     }
     // Update is called once per frame
     void FixedUpdate()

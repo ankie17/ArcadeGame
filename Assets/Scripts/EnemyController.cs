@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public Transform[] pointsArray;
+    //public Transform[] pointsArray;
     private int currentPointID;
     public float MoveSpeed;
     private float speedDelta;
@@ -19,6 +19,12 @@ public class EnemyController : MonoBehaviour
         Pause
     }
     private EnemyStates currentState = EnemyStates.Move;
+
+    public void SetVectorsArray(Vector3[] vectors)
+    {
+        vectorsArray = vectors;
+    }
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -27,16 +33,16 @@ public class EnemyController : MonoBehaviour
         enemyTransform = GetComponent<Transform>();
         direction = 1;
 
-        vectorsArray = new Vector3[pointsArray.Length];
+        /*vectorsArray = new Vector3[pointsArray.Length];
 
         for (int i=0; i < pointsArray.Length; i++)
         {
             vectorsArray[i] = pointsArray[i].position;
         }
 
-        
+        */
         enemyTransform.position = vectorsArray[0];
-        
+        enemyTransform.localScale *= 0.5f;
     }
     private void FixedUpdate()
     {
@@ -66,16 +72,19 @@ public class EnemyController : MonoBehaviour
     {
         Debug.Log("Pause");
         currentState = EnemyStates.Pause;
+        animator.speed = 0;
     }
     public void EnemyUnpause()
     {
         Debug.Log("Unpause");
         currentState = EnemyStates.Move;
+        animator.speed = 1;
     }
     private void Move()
     {
         enemyTransform.position = Vector3.MoveTowards(enemyTransform.position, vectorsArray[currentPointID], speedDelta);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Player")

@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2221678366852244120
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2221678366852244122}
+  - component: {fileID: 2221678366852244123}
+  m_Layer: 0
+  m_Name: LevelBuilder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2221678366852244122
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2221678366852244120}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 19, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2221678366852244123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2221678366852244120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22890b8f092ce17448fb3fd4b31b427b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  builderMode: 0
+  MatrixString: '[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1], [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,1], [1,0,0,1,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,1],
+    [1,0,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,1], [1,1,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,1],
+    [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1], [1,0,0,1,1,1,1,1,0,0,1,0,0,0,0,0,0,1,0,1],
+    [1,0,0,1,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1], [1,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1],
+    [1,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1], [1,0,0,1,1,1,1,1,0,0,1,0,0,1,1,1,1,0,0,1],
+    [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1], [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,1],
+    [1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1], [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1], [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]'
+  wall: {fileID: 5534366259747770662, guid: 5239c5dca024160439ab2a7c020b0ef7, type: 3}
+  floor: {fileID: 1732935144245055186, guid: 909554edfd317d942aea19e0bf70442e, type: 3}
+  star: {fileID: 2367227103646284738, guid: 0a031825a69d1fe4683bd2f60b4d443c, type: 3}
+  heart: {fileID: 3298607373040094467, guid: 638b6aae529932748a72a5240891a7e4, type: 3}

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public int levelId;
     private static GameManager instance;
     public int PlayerMaxLives;
     private int playerCurrentLives;
@@ -64,13 +65,14 @@ public class GameManager : MonoBehaviour
         playerCurrentLives--;
         if (playerCurrentLives > 0)
         {
-            player.SetActive(false);
+            player.GetComponent<PlayerController>().PlayDead(true);
+            Debug.Log("respawn menu");
             respawnMenu.SetActive(true);
         }
         else
         {
             //player dead
-            Object.Destroy(player);
+            player.GetComponent<PlayerController>().PlayDead(false);
             GameEnd(false);
         }
     }
@@ -120,7 +122,8 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log(name + " " + timer.levelTime);
         tableWriter.WritePlayerStats(name, timer.levelTime);
-        SceneManager.LoadScene("HighScoreScene");
+        //level transition
+        SceneManager.LoadScene($"level{levelId+1}");
     }
     public void HeartPickup()
     {
