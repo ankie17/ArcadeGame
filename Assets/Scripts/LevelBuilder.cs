@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.IO; 
 using UnityEngine;
-
 [ExecuteInEditMode]
 public class LevelBuilder : MonoBehaviour
 {
@@ -12,6 +11,7 @@ public class LevelBuilder : MonoBehaviour
         Manual,
         Request
     }
+    public GrassLoader grassLoader;
     public LevelBuilderMode builderMode = LevelBuilderMode.Manual;
     public const int LEVEL_SIZE = 20;
     private int[,] levelMatrix;
@@ -94,6 +94,8 @@ public class LevelBuilder : MonoBehaviour
                     if (levelMatrix[i, j] == 0)
                     {
                         var cell = Instantiate(floor, currentPos, Quaternion.identity);
+                        //set grass sprite
+                        cell.GetComponent<SpriteRenderer>().sprite = grassLoader.GetGrassSprite();
                         cell.transform.parent = gameObject.transform;
                     }
                     else if (levelMatrix[i, j] == 1)
@@ -106,17 +108,21 @@ public class LevelBuilder : MonoBehaviour
                         //spawn star
                         var cell = Instantiate(star, currentPos, Quaternion.identity);
                         cell.transform.parent = gameObject.transform;
+                        
                         var v = Instantiate(floor, currentPos, Quaternion.identity);
                         v.transform.parent = gameObject.transform;
+                        v.GetComponent<SpriteRenderer>().sprite = grassLoader.GetGrassSprite();
                     }
                     else if (levelMatrix[i, j] == 3)
                     {
                         //spawn heart
                         var heratCell = Instantiate(heart, currentPos, Quaternion.identity);
                         heratCell.transform.parent = gameObject.transform;
+                        
                         //heratCell.SetActive(false);
                         var v = Instantiate(floor, currentPos, Quaternion.identity);
                         v.transform.parent = gameObject.transform;
+                        v.GetComponent<SpriteRenderer>().sprite = grassLoader.GetGrassSprite();
                     }
                 }
             }

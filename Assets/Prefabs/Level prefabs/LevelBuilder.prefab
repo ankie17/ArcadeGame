@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22890b8f092ce17448fb3fd4b31b427b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grassLoader: {fileID: 0}
   builderMode: 0
   MatrixString: '[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1],
     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1], [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
