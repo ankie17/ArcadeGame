@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-[ExecuteInEditMode]
+
 public class BrickWallBuilder : MonoBehaviour
 {
     public GameObject brickPrefab;
     private Vector3 position;
     private List<Sprite> sprites = new List<Sprite>();
-    void Start()
+    [ContextMenu("BuildWall")]
+    void BuildWall()
     {
         if (transform.childCount == 0) { 
         position = transform.position;

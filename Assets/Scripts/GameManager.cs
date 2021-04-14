@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     private GameObject player;
     private GameObject heart;
     private LevelTimer timer;
+    private FXManager fXManager;
     private HighScoreTableWriter tableWriter;
     public GameObject respawnMenu;
     public static GameManager Instance { get { return instance; } }
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        fXManager = GameObject.FindObjectOfType<FXManager>();
         player = GameObject.FindGameObjectWithTag("Player");
         nicknameMenu = FindObjectOfType<NicknameScipr>().gameObject;
         nicknameMenu.SetActive(false);
@@ -48,10 +50,14 @@ public class GameManager : MonoBehaviour
     public void StarPickup()
     {
         StarsQuantity--;
+        //play pickup sound
+        fXManager.PlayOneShot(0);
         if (StarsQuantity == 0)
         {
             //complete level
+            fXManager.PlayOneShot(3);
             Debug.Log("Level complete");
+            
             GameEnd(true);
         }
         if (StarsQuantity == 1)
@@ -72,6 +78,8 @@ public class GameManager : MonoBehaviour
         else
         {
             //player dead
+            //loose sound
+            fXManager.PlayOneShot(2);
             player.GetComponent<PlayerController>().PlayDead(false);
             GameEnd(false);
         }

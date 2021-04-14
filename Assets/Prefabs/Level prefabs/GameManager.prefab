@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb7986bb7e309254783e6ee559253184, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelId: 1
   PlayerMaxLives: 3
   StarsQuantity: 0
   respawnMenu: {fileID: 0}
@@ -102,8 +103,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 680595125022526537, guid: a5b83bfdd88ba68458bc8e602397dc1b,
     type: 3}
-  borders: 
-  enemyTrajectories: []
+  borders: 0200000003000000
+  enemyTrajectories:
+  - {x: 10, y: 11, z: 0}
+  - {x: 10, y: 17, z: 0}
+  - {x: 5, y: 11, z: 0}
+  - {x: 5, y: 13, z: 0}
+  - {x: 9, y: 13, z: 0}
 --- !u!1 &1127577518820419190
 GameObject:
   m_ObjectHideFlags: 0

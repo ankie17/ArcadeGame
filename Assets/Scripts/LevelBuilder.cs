@@ -21,7 +21,24 @@ public class LevelBuilder : MonoBehaviour
     public GameObject star;
     public GameObject heart;
     private Vector3 startPos;
-    void Start()
+
+    #region constants
+    /*
+     * 0-пол
+1-стена
+2-игрок
+3-4-5 -враги
+6-звезды
+7-сердечко
+     */
+    const int floorID = 0;
+    const int wallID = 1;
+    const int starID = 6;
+    const int heartID = 7;
+    #endregion
+
+    [ContextMenu("GenerateLevel")]
+    public void GenerateLevel()
     {
         //получить от микросервиса строку с матрицей
         startPos = transform.position;
@@ -35,6 +52,14 @@ public class LevelBuilder : MonoBehaviour
         ParseMatrix();
         GeneratePickupCoordinates();
         BuildLevel();
+    }
+    [ContextMenu("DestroyChilds")]
+    public void DestroyChilds()
+    {
+        foreach (Transform c in transform)
+        {
+            DestroyImmediate(c.gameObject);
+        }
     }
     private void FixedUpdate()
     {
@@ -91,19 +116,19 @@ public class LevelBuilder : MonoBehaviour
                 {
                     Vector3 currentPos = new Vector3(startPos.x + j, startPos.y - i, startPos.z);
 
-                    if (levelMatrix[i, j] == 0)
+                    if (levelMatrix[i, j] == floorID)
                     {
                         var cell = Instantiate(floor, currentPos, Quaternion.identity);
                         //set grass sprite
                         cell.GetComponent<SpriteRenderer>().sprite = grassLoader.GetGrassSprite();
                         cell.transform.parent = gameObject.transform;
                     }
-                    else if (levelMatrix[i, j] == 1)
+                    else if (levelMatrix[i, j] == wallID)
                     {
                         var cell = Instantiate(wall, currentPos, Quaternion.identity);
                         cell.transform.parent = gameObject.transform;
                     }
-                    else if (levelMatrix[i, j] == 2)
+                    else if (levelMatrix[i, j] == starID)
                     {
                         //spawn star
                         var cell = Instantiate(star, currentPos, Quaternion.identity);
@@ -113,7 +138,7 @@ public class LevelBuilder : MonoBehaviour
                         v.transform.parent = gameObject.transform;
                         v.GetComponent<SpriteRenderer>().sprite = grassLoader.GetGrassSprite();
                     }
-                    else if (levelMatrix[i, j] == 3)
+                    else if (levelMatrix[i, j] == heartID)
                     {
                         //spawn heart
                         var heratCell = Instantiate(heart, currentPos, Quaternion.identity);
@@ -158,11 +183,11 @@ public class LevelBuilder : MonoBehaviour
             int columnID = val % LEVEL_SIZE;
             if (i == 3)
             {
-                levelMatrix[rowID, columnID] = 3;
+                levelMatrix[rowID, columnID] = heartID;
             }
             else
             {
-                levelMatrix[rowID, columnID] = 2;
+                levelMatrix[rowID, columnID] = starID;
             }
         }
     }

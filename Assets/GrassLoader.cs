@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class GrassLoader : MonoBehaviour
 {
-    public List<Sprite> grassSprites = new List<Sprite>();
+    public Sprite[] grassSprites = new Sprite[4];
     private int counter = 0;
-    void Awake()
+
+    [ContextMenu("LoadGrass")]
+    void LoadGrass()
     {
         for (int i = 0; i < 4; i++)
         {
             int id = Random.Range(0, 24);
-            grassSprites.Add(Resources.Load<Sprite>($"grass{id}"));
+            grassSprites[i] = Resources.Load<Sprite>($"grass{id}");
         }
     }
     public Sprite GetGrassSprite()
     {
         counter++;
-        return grassSprites[0];
+        return grassSprites[counter%4];
     }
 }

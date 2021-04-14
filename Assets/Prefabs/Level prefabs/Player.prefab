@@ -323,7 +323,8 @@ MonoBehaviour:
   MoveSpeed: 5
   Sprite: {fileID: 2748294226202370360}
   wc: {fileID: 5644736920394197700}
-  PlayerDeathPrefab: {fileID: 0}
+  PlayerDeathPrefab: {fileID: 6707315136271863089, guid: ac6e80a8e29609a4f99e78a8aa6cc427,
+    type: 3}
 --- !u!58 &1892322975
 CircleCollider2D:
   m_ObjectHideFlags: 0

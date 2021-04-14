@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour
         gameObject.SetActive(true);
         currentState = States.Idle;
         transform.position = spawnPosition;
+        FindObjectOfType<FXManager>().PlayOneShot(1);
     }
 
     public void UnpausePlayer()
