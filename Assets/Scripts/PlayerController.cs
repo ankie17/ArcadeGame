@@ -2,23 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-enum States
-{   
-    Idle = 0,
-    Pause,
-    Right,
-    Left,
-    Top,
-    Down,
-    Dead
-}
 public class PlayerController : MonoBehaviour
 {
 
     public float MoveSpeed = 5.0f;
     private Vector3 spawnPosition;
-    private States currentState = States.Idle;
-    private States previousState;
+    private PlayerStates currentState = PlayerStates.Idle;
+    private PlayerStates previousState;
     private float horizontalInput;
     private float verticalInput;
     public GameObject Sprite;
@@ -28,6 +18,19 @@ public class PlayerController : MonoBehaviour
     private int stateID;
     private Animator animator;
     public GameObject PlayerDeathPrefab;
+
+
+    enum PlayerStates
+    {
+        Idle = 0,
+        Pause,
+        Right,
+        Left,
+        Top,
+        Down,
+        Dead
+    }
+
     private void Start()
     {
         animator = GetComponentInChildren<Animator>();
@@ -36,29 +39,29 @@ public class PlayerController : MonoBehaviour
     }
     public void PausePlayer()
     {
-        if (currentState != States.Pause)
+        if (currentState != PlayerStates.Pause)
         {
             animator.speed = 0;
             previousState = currentState;
-            currentState = States.Pause;
+            currentState = PlayerStates.Pause;
         }
     }
 
     public void Respawn()
     {
         gameObject.SetActive(true);
-        currentState = States.Idle;
+        currentState = PlayerStates.Idle;
         transform.position = spawnPosition;
         FindObjectOfType<FXManager>().PlayOneShot(1);
     }
 
     public void UnpausePlayer()
     {
-        if (currentState == States.Pause)
+        if (currentState == PlayerStates.Pause)
         {
             animator.speed = 1;
             currentState = previousState;
-            previousState = States.Pause;
+            previousState = PlayerStates.Pause;
         }
     }
     public void PlayDead(bool canRespawn)
@@ -78,7 +81,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         //получить инпут стрелки с клавиатуры
-        if (currentState != States.Pause)
+        if (currentState != PlayerStates.Pause)
         {
             horizontalInput = Input.GetAxis("Horizontal");
             verticalInput = Input.GetAxis("Vertical");
@@ -90,35 +93,35 @@ public class PlayerController : MonoBehaviour
         //изменить направление движения
         if (horizontalInput < 0&&wc.Left)
         {
-            currentState = States.Left;
+            currentState = PlayerStates.Left;
         }
         if(horizontalInput > 0&&wc.Right)
         {
-            currentState = States.Right;
+            currentState = PlayerStates.Right;
         }
         if (verticalInput < 0&&wc.Bottom)
         {
-            currentState = States.Down;
+            currentState = PlayerStates.Down;
         }
         if (verticalInput > 0&&wc.Top)
         {
-            currentState = States.Top;
+            currentState = PlayerStates.Top;
         }
         //изменить координату объект, передвинув его на несколько условных единиц
         Vector3 moveVector = Vector3.zero;
-        if (currentState == States.Top)
+        if (currentState == PlayerStates.Top)
         {
             moveVector = Vector3.up;
         }
-        if (currentState == States.Down)
+        if (currentState == PlayerStates.Down)
         {
             moveVector = Vector3.down;
         }
-        if (currentState == States.Left)
+        if (currentState == PlayerStates.Left)
         {
             moveVector = Vector3.left;
         }
-        if (currentState == States.Right)
+        if (currentState == PlayerStates.Right)
         {
             moveVector = Vector3.right;
         }
