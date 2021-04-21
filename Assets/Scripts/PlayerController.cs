@@ -2,16 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-enum PlayerStates
-{   
-    Idle = 0,
-    Pause,
-    Right,
-    Left,
-    Top,
-    Down,
-    Dead
-}
 public class PlayerController : MonoBehaviour
 {
 
@@ -28,6 +18,19 @@ public class PlayerController : MonoBehaviour
     private int stateID;
     private Animator animator;
     public GameObject PlayerDeathPrefab;
+
+
+    enum PlayerStates
+    {
+        Idle = 0,
+        Pause,
+        Right,
+        Left,
+        Top,
+        Down,
+        Dead
+    }
+
     private void Start()
     {
         animator = GetComponentInChildren<Animator>();
@@ -51,10 +54,7 @@ public class PlayerController : MonoBehaviour
         transform.position = spawnPosition;
         FindObjectOfType<FXManager>().PlayOneShot(1);
     }
-    public bool IsDead()
-    {
-        return currentState == PlayerStates.Dead;
-    }
+
     public void UnpausePlayer()
     {
         if (currentState == PlayerStates.Pause)
@@ -75,7 +75,6 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
         }
         var s = Instantiate(PlayerDeathPrefab, this.transform.position, Quaternion.identity);
-        currentState = PlayerStates.Dead;
         Destroy(s, 1.0f);
     }
     // Update is called once per frame

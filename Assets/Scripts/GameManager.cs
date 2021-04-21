@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     {
         fXManager = GameObject.FindObjectOfType<FXManager>();
         player = GameObject.FindGameObjectWithTag("Player");
-        nicknameMenu = FindObjectOfType<NicknameScipr>().gameObject;
+        nicknameMenu = FindObjectOfType<NicknameField>().gameObject;
         nicknameMenu.SetActive(false);
         heart = GameObject.FindGameObjectWithTag("Heart");
         heart.SetActive(false);
