@@ -42,16 +42,18 @@ public class LevelBuilder : MonoBehaviour
     {
         //получить от микросервиса строку с матрицей
         startPos = transform.position;
+        GenerateMatrix();
+        BuildLevel();
+    }
+    private void GenerateMatrix()
+    {
         levelMatrix = new int[LEVEL_SIZE, LEVEL_SIZE];
-        //нужно вызвать метод парсинга и наполнить матрицу
         if (builderMode == LevelBuilderMode.Request)
         {
             LevelRequest();
         }
-        //далее нужно проитерироваться по ней и построить уровень
         ParseMatrix();
         GeneratePickupCoordinates();
-        BuildLevel();
     }
     [ContextMenu("DestroyChilds")]
     public void DestroyChilds()
@@ -64,6 +66,62 @@ public class LevelBuilder : MonoBehaviour
     private void FixedUpdate()
     {
         //Debug.Log(gameObject.transform.childCount);
+    }
+    public LevelMatrix GetLevelMatrix()
+    {
+        GenerateMatrix();
+
+        int[][] m = new int[20][];
+        for (int i = 0; i < 20; i++)
+        {
+            m[i] = new int[20];
+            for (int j = 0; j < 20; j++)
+            {
+                int id = levelMatrix[i, j];
+                if (id==6||id==7) //delete old pickup coords, we will find it later
+                    id = 0;
+                m[i][j] = id;
+
+            }
+        }
+        //find pickup coords
+        var stars = FindObjectsOfType<Star>();
+        if (stars.Length > 0)//if they exist
+        {
+            //write to matrix
+            foreach (var s in stars)
+            {
+                var pos = s.GetStarPos();
+                int x = (int)pos.x;
+                int y = MirrorYByMiddle((int)pos.y);
+                m[y][x] = 6;
+            }
+        }
+
+        //find heart coords
+        var heart = FindObjectOfType<Heart>();
+        if (heart != null)//if it exists
+        {
+            //write to matrix
+            var pos = heart.GetHeartPos();
+            int x = (int)pos.x;
+            int y = MirrorYByMiddle((int)pos.y);
+            m[y][x] = 7;
+        }
+        LevelMatrix lm = new LevelMatrix();
+        foreach(var e in FindObjectsOfType<EnemyAIController>())
+        {
+            m[e.posY][e.posX] = e.Id;
+        }
+        Vector2 playerPos = FindObjectOfType<PlayerController>().GetPlayerPos();
+        m[MirrorYByMiddle((int)playerPos.y)][(int)playerPos.x] = 2; //player ID=2
+        lm.level_matrix = m;
+        return lm;
+    }
+    private int MirrorYByMiddle(int y)
+    {
+        int mirrored = 19 - y;
+        return mirrored;
     }
     public void ParseMatrix()
     {
