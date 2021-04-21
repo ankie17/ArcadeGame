@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.IO; 
 using UnityEngine;
+using System;
+
 [ExecuteInEditMode]
 public class LevelBuilder : MonoBehaviour
 {
@@ -67,7 +70,7 @@ public class LevelBuilder : MonoBehaviour
     {
         //Debug.Log(gameObject.transform.childCount);
     }
-    public LevelMatrix GetLevelMatrix()
+    /*public LevelMatrix GetLevelMatrix()
     {
         GenerateMatrix();
 
@@ -108,13 +111,118 @@ public class LevelBuilder : MonoBehaviour
             int y = MirrorYByMiddle((int)pos.y);
             m[y][x] = 7;
         }
-        LevelMatrix lm = new LevelMatrix();
+        
+        //find enemies and write their coords
         foreach(var e in FindObjectsOfType<EnemyAIController>())
         {
             m[e.posY][e.posX] = e.Id;
         }
+
+        //find player and write his coords
         Vector2 playerPos = FindObjectOfType<PlayerController>().GetPlayerPos();
         m[MirrorYByMiddle((int)playerPos.y)][(int)playerPos.x] = 2; //player ID=2
+
+        //create level matrix object and write to it
+        LevelMatrix lm = new LevelMatrix();
+        lm.level_matrix = m;
+        return lm;
+    }*/
+    public LevelMatrix GetLevelMatrix()
+    {
+        GenerateMatrix();
+
+        int[][] m = new int[20][];
+        for (int i = 0; i < 20; i++)
+        {
+            m[i] = new int[20];
+            for (int j = 0; j < 20; j++)
+            {
+                int id = levelMatrix[i, j];
+                if (id == 6 || id == 7) //delete old pickup coords, we will find it later
+                    id = 0;
+                m[i][j] = id;
+
+            }
+        }
+        //coord - string value dictionary
+        Dictionary<Tuple<int, int>, string> coordId = new Dictionary<Tuple<int, int>, string>();
+
+        //find player and write his coords
+        Vector2 playerPos = FindObjectOfType<PlayerController>().GetPlayerPos();
+        Tuple<int, int> keyPlayer = new Tuple<int, int>(MirrorYByMiddle((int)playerPos.y), (int)playerPos.x);
+        coordId[keyPlayer] = "";
+        coordId[keyPlayer] += "2";
+
+        //find enemies and write their coords
+        var enemies = FindObjectsOfType<EnemyAIController>();
+        enemies = (from e in enemies
+                   orderby e.Id ascending
+                   select e).ToArray();
+
+        foreach(var e in enemies)
+        {
+            Tuple<int, int> keyEnemy = new Tuple<int, int>(e.posY, e.posX);
+            if(!coordId.ContainsKey(keyEnemy))
+                coordId[keyEnemy] = "";
+        }
+        foreach (var e in enemies)
+        {
+            Tuple<int, int> keyEnemy = new Tuple<int, int>(e.posY, e.posX);
+            coordId[keyEnemy] += e.Id.ToString();
+        }
+
+        //find star coords
+        var stars = FindObjectsOfType<Star>();
+        if (stars.Length > 0)//if they exist
+        {
+            foreach(var s in stars)
+            {
+                var pos = s.GetStarPos();
+                int x = (int)pos.x;
+                int y = MirrorYByMiddle((int)pos.y);
+
+                Tuple<int, int> keyStar = new Tuple<int, int>(y, x);
+                if (!coordId.ContainsKey(keyStar))
+                    coordId[keyStar] = "";
+            }
+            //write to matrix
+            foreach (var s in stars)
+            {
+                var pos = s.GetStarPos();
+                int x = (int)pos.x;
+                int y = MirrorYByMiddle((int)pos.y);
+
+                Tuple<int, int> keyStar = new Tuple<int, int>(y, x);
+                coordId[keyStar] += "6";
+            }
+        }
+
+        //find heart coords
+        var heart = FindObjectOfType<Heart>();
+        if (heart != null)//if it exists
+        {
+            //write to matrix
+            var pos = heart.GetHeartPos();
+            int x = (int)pos.x;
+            int y = MirrorYByMiddle((int)pos.y);
+
+            Tuple<int, int> keyHeart = new Tuple<int, int>(y, x);
+            if (!coordId.ContainsKey(keyHeart))
+                coordId[keyHeart] = "";
+            coordId[keyHeart] += "7";
+        }
+        //write to matrix
+        foreach(var pair in coordId)
+        {
+            int x = pair.Key.Item2;
+            int y = pair.Key.Item1;
+
+            int id = int.Parse(pair.Value);
+
+            m[y][x] = id;
+        }
+        //create level matrix object and write to it
+        LevelMatrix lm = new LevelMatrix();
         lm.level_matrix = m;
         return lm;
     }

@@ -11,7 +11,7 @@ public class EnemyAIController : MonoBehaviour
     public double[,] ValueMatrix = new double[20, 20];
     public int posX, posY;
     public Vector3 target;
-    private float moveSpeed = 5f;
+    public float moveSpeed = 5f;
     public double top;
     public double down;
     public double left;
@@ -68,21 +68,21 @@ public class EnemyAIController : MonoBehaviour
     {
         List<Tuple<int, double>> values = new List<Tuple<int, double>>();
         {
-            middle = ValueMatrix[posY, posX];
+            //middle = ValueMatrix[posY, posX];
             right = ValueMatrix[posY, posX + 1];
             left = ValueMatrix[posY, posX - 1];
             top = ValueMatrix[posY - 1, posX];
             down = ValueMatrix[posY + 1, posX];
             //top is down down is top?
         }
-        values.Add(new Tuple<int, double>(0, ValueMatrix[posY, posX]));//middle value
+        //values.Add(new Tuple<int, double>(0, ValueMatrix[posY, posX]));//middle value
         values.Add(new Tuple<int, double>(1, ValueMatrix[posY, posX + 1]));//right value
         values.Add(new Tuple<int, double>(2, ValueMatrix[posY, posX - 1]));//left value
         values.Add(new Tuple<int, double>(3, ValueMatrix[posY - 1, posX]));//top value
         values.Add(new Tuple<int, double>(4, ValueMatrix[posY + 1, posX]));//down value
         foreach(var v in values)
         {
-            print($"index {v.Item1} value {v.Item2}");
+            //print($"index {v.Item1} value {v.Item2}");
         }
         List<int> maxIndexes = new List<int>(); //индексы максимальных значений
 
@@ -92,7 +92,7 @@ public class EnemyAIController : MonoBehaviour
                   select v).ToList();
 
         double maxValue = values[0].Item2; //по умолчанию максимальное значение первое
-        //print(maxValue);
+        print(maxValue);
         foreach (var v in values) //в цикле добавляем индексы если есть клетки с таким же значением
         {
             if (v.Item2 == maxValue)
