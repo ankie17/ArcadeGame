@@ -12,9 +12,39 @@ EditorBuildSettings:
     path: Assets/Scenes/HighScoreScene.unity
     guid: 87d8aa155308d3c43912cbf28d1212c2
   - enabled: 1
+    path: Assets/Scenes/Intro.unity
+    guid: f28940c897e0e164285d8b031806ca91
+  - enabled: 1
     path: Assets/Scenes/level1.unity
     guid: 972ea000fed73a54d9c1e72012c59057
   - enabled: 1
     path: Assets/Scenes/level2.unity
     guid: 621bbb269a4122341a7d9b3c68bc9cc0
+  - enabled: 1
+    path: Assets/Scenes/level3.unity
+    guid: 34ea992079e87c84f93e0b6caa64d08b
+  - enabled: 1
+    path: Assets/Scenes/level4.unity
+    guid: 5ffaf8a1b0651de478b2ae7f3c64d905
+  - enabled: 1
+    path: Assets/Scenes/level5.unity
+    guid: 8703b2c31e22ebd4ea9edf1feaa07119
+  - enabled: 1
+    path: Assets/Scenes/level6.unity
+    guid: d0abbfd9d11be334ab3f62ed77ebdecf
+  - enabled: 1
+    path: Assets/Scenes/level7.unity
+    guid: ddeca69051876764a9171023ecae4e35
+  - enabled: 1
+    path: Assets/Scenes/level8.unity
+    guid: 6a8a35af043e8e847a11b7a6d77194d8
+  - enabled: 1
+    path: Assets/Scenes/level9.unity
+    guid: c92bde37d61633049b06e35678bb76dc
+  - enabled: 1
+    path: Assets/Scenes/level10.unity
+    guid: 49bd6f17c99e3af47b602ff7bde441c5
+  - enabled: 1
+    path: Assets/Scenes/Outro.unity
+    guid: f3f773e9f1f0a3f4eb4612f6bfe5feee
   m_configObjects: {}

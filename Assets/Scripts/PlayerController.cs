@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
 
     public float MoveSpeed = 5.0f;
+    private bool paused;
     private Vector3 spawnPosition;
     private PlayerStates currentState = PlayerStates.Idle;
     private PlayerStates previousState;
@@ -14,7 +15,6 @@ public class PlayerController : MonoBehaviour
     public GameObject Sprite;
     private Rigidbody2D rb;
     public WallChecker wc;
-    private bool walking;
     private int stateID;
     private Animator animator;
     public GameObject PlayerDeathPrefab;
@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
         Dead
     }
 
-    private void Start()
+    private void Awake()
     {
         animator = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
     }
     public void PausePlayer()
     {
+        paused = true;
         if (currentState != PlayerStates.Pause)
         {
             animator.speed = 0;
@@ -52,11 +53,11 @@ public class PlayerController : MonoBehaviour
         gameObject.SetActive(true);
         currentState = PlayerStates.Idle;
         transform.position = spawnPosition;
-        FindObjectOfType<FXManager>().PlayOneShot(1);
     }
 
     public void UnpausePlayer()
     {
+        paused = false;
         if (currentState == PlayerStates.Pause)
         {
             animator.speed = 1;
@@ -69,6 +70,7 @@ public class PlayerController : MonoBehaviour
         if (canRespawn)
         {
             gameObject.SetActive(false);
+            FindObjectOfType<FXManager>().PlayOneShot(1);
         }
         else
         {
@@ -80,55 +82,63 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        //получить инпут стрелки с клавиатуры
-        if (currentState != PlayerStates.Pause)
+        if (paused)
         {
-            horizontalInput = Input.GetAxis("Horizontal");
-            verticalInput = Input.GetAxis("Vertical");
-            if (horizontalInput != 0)
+            rb.velocity = Vector3.zero;
+            PausePlayer();
+        }
+        else
+        {
+            //получить инпут стрелки с клавиатуры
+            if (currentState != PlayerStates.Pause)
             {
-                verticalInput = 0;
+                horizontalInput = Input.GetAxis("Horizontal");
+                verticalInput = Input.GetAxis("Vertical");
+                if (horizontalInput != 0)
+                {
+                    verticalInput = 0;
+                }
             }
-        }
-        //изменить направление движения
-        if (horizontalInput < 0&&wc.Left)
-        {
-            currentState = PlayerStates.Left;
-        }
-        if(horizontalInput > 0&&wc.Right)
-        {
-            currentState = PlayerStates.Right;
-        }
-        if (verticalInput < 0&&wc.Bottom)
-        {
-            currentState = PlayerStates.Down;
-        }
-        if (verticalInput > 0&&wc.Top)
-        {
-            currentState = PlayerStates.Top;
-        }
-        //изменить координату объект, передвинув его на несколько условных единиц
-        Vector3 moveVector = Vector3.zero;
-        if (currentState == PlayerStates.Top)
-        {
-            moveVector = Vector3.up;
-        }
-        if (currentState == PlayerStates.Down)
-        {
-            moveVector = Vector3.down;
-        }
-        if (currentState == PlayerStates.Left)
-        {
-            moveVector = Vector3.left;
-        }
-        if (currentState == PlayerStates.Right)
-        {
-            moveVector = Vector3.right;
-        }
+            //изменить направление движения
+            if (horizontalInput < 0 && wc.Left)
+            {
+                currentState = PlayerStates.Left;
+            }
+            if (horizontalInput > 0 && wc.Right)
+            {
+                currentState = PlayerStates.Right;
+            }
+            if (verticalInput < 0 && wc.Bottom)
+            {
+                currentState = PlayerStates.Down;
+            }
+            if (verticalInput > 0 && wc.Top)
+            {
+                currentState = PlayerStates.Top;
+            }
+            //изменить координату объект, передвинув его на несколько условных единиц
+            Vector3 moveVector = Vector3.zero;
+            if (currentState == PlayerStates.Top)
+            {
+                moveVector = Vector3.up;
+            }
+            if (currentState == PlayerStates.Down)
+            {
+                moveVector = Vector3.down;
+            }
+            if (currentState == PlayerStates.Left)
+            {
+                moveVector = Vector3.left;
+            }
+            if (currentState == PlayerStates.Right)
+            {
+                moveVector = Vector3.right;
+            }
 
-        moveVector = moveVector * MoveSpeed;
+            moveVector = moveVector * MoveSpeed;
 
-        rb.velocity = moveVector;
+            rb.velocity = moveVector;
+        }
     }
     private void Update()
     {

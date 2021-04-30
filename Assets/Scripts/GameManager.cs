@@ -5,12 +5,18 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public enum GameMode
+    {
+        Normal,
+        AI
+    }
+
+    public GameMode gameMode;
     public int levelId;
     private static GameManager instance;
     public int PlayerMaxLives;
     private int playerCurrentLives;
     public int StarsQuantity;
-    private GameObject nicknameMenu;
     private GameObject player;
     private GameObject heart;
     private LevelTimer timer;
@@ -18,6 +24,7 @@ public class GameManager : MonoBehaviour
     private HighScoreTableWriter tableWriter;
     public GameObject respawnMenu;
     public static GameManager Instance { get { return instance; } }
+
 
     private void Awake()
     {
@@ -29,13 +36,14 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
+
+        FindAndAssignKeyGameObjects();
     }
-    private void Start()
+    private void FindAndAssignKeyGameObjects()
     {
-        fXManager = GameObject.FindObjectOfType<FXManager>();
+        fXManager = FindObjectOfType<FXManager>();
         player = GameObject.FindGameObjectWithTag("Player");
-        nicknameMenu = FindObjectOfType<NicknameField>().gameObject;
-        nicknameMenu.SetActive(false);
+
         heart = GameObject.FindGameObjectWithTag("Heart");
         heart.SetActive(false);
         var stars = GameObject.FindGameObjectsWithTag("Star");
@@ -46,12 +54,19 @@ public class GameManager : MonoBehaviour
         tableWriter = GetComponent<HighScoreTableWriter>();
 
         playerCurrentLives = PlayerMaxLives;
+
+        //write progress
+        PlayerPrefs.SetInt("CurrentLevelId", levelId);
+        PlayerPrefs.Save();
     }
     public void StarPickup()
     {
         StarsQuantity--;
-        //play pickup sound
-        fXManager.PlayOneShot(0);
+
+        if (StarsQuantity >= 1)
+        {
+            fXManager.PlayOneShot(0);
+        }
         if (StarsQuantity == 0)
         {
             //complete level
@@ -87,30 +102,54 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame()
     {
-        AudioSource audioSource = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<AudioSource>();
-
-        audioSource.Pause();
-
-        player.GetComponent<PlayerController>().PausePlayer();
+        if (player != null)
+        {
+            player.GetComponent<PlayerController>().PausePlayer();
+        }
 
         foreach(GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            enemy.GetComponent<EnemyController>().EnemyPause();
+            if (gameMode == GameMode.Normal)
+            {
+                enemy.GetComponent<EnemyController>().EnemyPause();
+            }
+            else
+            {
+                enemy.GetComponent<EnemyAIController>().EnemyPause();
+            }
         }
+
+        if (gameMode == GameMode.AI) 
+        {
+            var aiManager = FindObjectOfType<AIManager>();
+            aiManager.Paused = true;
+        } 
 
         timer.switchStates();
     }
     public void ResumeGame()
     {
-        AudioSource audioSource = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<AudioSource>();
-
-        audioSource.Play();
-
-        player.GetComponent<PlayerController>().UnpausePlayer();
+        if (player != null)
+        {
+            player.GetComponent<PlayerController>().UnpausePlayer();
+        }
 
         foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            enemy.GetComponent<EnemyController>().EnemyUnpause();
+            if (gameMode == GameMode.Normal)
+            {
+                enemy.GetComponent<EnemyController>().EnemyUnpause();
+            }
+            else
+            {
+                enemy.GetComponent<EnemyAIController>().EnemyUnpause();
+            }
+        }
+
+        if (gameMode == GameMode.AI)
+        {
+            var aiManager = FindObjectOfType<AIManager>();
+            aiManager.Paused = false;
         }
 
         timer.switchStates();
@@ -123,18 +162,42 @@ public class GameManager : MonoBehaviour
             PauseGame();
             player.SetActive(false);
             //запустить окно ввода никнейма
-            nicknameMenu.SetActive(true);
+            if (levelId == 10)
+            {
+                var menu = FindObjectOfType<NicknameMenu>();
+                menu.nickNameMenu.SetActive(true);
+            }
+            else
+            {
+                //level transition
+                StartCoroutine(LevelTransition());
+            }
         }
+        else
+        {
+            StartCoroutine(LevelReload());
+        }
+    }
+    private IEnumerator LevelTransition()
+    {
+        yield return new WaitForSeconds(2.0f);
+        SceneManager.LoadScene($"level{levelId + 1}");
+    }
+    private IEnumerator LevelReload()
+    {
+        yield return new WaitForSeconds(2.0f);
+        var currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(currentScene.name);
     }
     public void LogPlayerStats(string name)
     {
-        Debug.Log(name + " " + timer.levelTime);
-        tableWriter.WritePlayerStats(name, timer.levelTime);
-        //level transition
-        SceneManager.LoadScene($"level{levelId+1}");
+        tableWriter.WritePlayerStats(name, (int)timer.levelTime);
+
+        SceneManager.LoadScene("Outro");
     }
     public void HeartPickup()
     {
+        fXManager.PlayOneShot(0);
         playerCurrentLives++;
     }
     public void ActivateHeart()

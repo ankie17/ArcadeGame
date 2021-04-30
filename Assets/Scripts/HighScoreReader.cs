@@ -41,7 +41,7 @@ public class HighScoreReader : MonoBehaviour
         reader.Close();
 
         var sortedTable = from s in stats
-                          orderby s.minutes, s.seconds descending
+                          orderby s.minutes, s.seconds ascending
                           select s;
 
         stats = sortedTable.ToList();
@@ -49,7 +49,7 @@ public class HighScoreReader : MonoBehaviour
         foreach(var s in stats)
         {
             string st = "";
-            st = s.name + " " + s.minutes + ":" + s.seconds;
+            st = s.name + " " + s.minutes + "m " + s.seconds + "s";
             tableText += st + "\n";
         }
 

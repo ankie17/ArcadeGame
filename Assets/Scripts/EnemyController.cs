@@ -12,20 +12,12 @@ public class EnemyController : MonoBehaviour
     private Transform enemyTransform;
     private Vector3[] vectorsArray;
     private Animator animator;
-    // Start is called before the first frame update
-    enum EnemyStates
-    {
-        Move = 0,
-        Pause
-    }
     private EnemyStates currentState = EnemyStates.Move;
-
     public void SetVectorsArray(Vector3[] vectors)
     {
         vectorsArray = vectors;
     }
-
-    void Start()
+    public void Prepare()
     {
         animator = GetComponent<Animator>();
         speedDelta = MoveSpeed * Time.fixedDeltaTime;
@@ -42,7 +34,6 @@ public class EnemyController : MonoBehaviour
 
         */
         enemyTransform.position = vectorsArray[0];
-        enemyTransform.localScale *= 0.5f;
     }
     private void FixedUpdate()
     {
@@ -80,18 +71,24 @@ public class EnemyController : MonoBehaviour
         currentState = EnemyStates.Move;
         animator.speed = 1;
     }
+    public void StartAttack()
+    {
+        currentState = EnemyStates.Attacking;
+    }
+    public void FinishAttack()
+    {
+        currentState = EnemyStates.Move;
+    }
     private void Move()
     {
         enemyTransform.position = Vector3.MoveTowards(enemyTransform.position, vectorsArray[currentPointID], speedDelta);
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Player")
         {
             GameManager.Instance.PlayerHurt();
             animator.SetTrigger("Attack");
-            Debug.Log("Enemy collided with player");
         }
     }
 }

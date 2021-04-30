@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2142637725282273462}
   - component: {fileID: 6692046065598965315}
   - component: {fileID: 247238133157121166}
-  - component: {fileID: 1891713957743266188}
   - component: {fileID: 996516585369375985}
   m_Layer: 0
   m_Name: Star
@@ -74,13 +73,12 @@ SpriteRenderer:
   m_SortingLayerID: -765131443
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -8763447336608402596, guid: 5550339b117141c4ab0016ff066ae5ea,
-    type: 3}
+  m_Sprite: {fileID: 21300000, guid: aff76603cc0600f4387fdc070d5168ec, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 10.24, y: 10.24}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -114,27 +112,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 2.9
---- !u!50 &1891713957743266188
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2367227103646284738}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 1
-  m_Constraints: 0
 --- !u!95 &996516585369375985
 Animator:
   serializedVersion: 3

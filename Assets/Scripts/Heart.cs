@@ -8,9 +8,8 @@ public class Heart : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            Object.Destroy(gameObject);
+            Destroy(gameObject);
             GameManager.Instance.HeartPickup();
-            Debug.Log("Star coolided with player");
         }
     }
 

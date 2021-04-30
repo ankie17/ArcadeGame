@@ -8,9 +8,8 @@ public class Star : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            Object.Destroy(gameObject);
+            Destroy(gameObject);
             GameManager.Instance.StarPickup();
-            Debug.Log("Star coolided with player");
         }
     }
 

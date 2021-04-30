@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1127577517218737589}
   - component: {fileID: 1127577517218737576}
   - component: {fileID: 1127577517218737591}
-  - component: {fileID: 1127577517218737577}
   - component: {fileID: 1127577517218737578}
   m_Layer: 0
   m_Name: GameManager
@@ -77,18 +76,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73b36a7c2d9e91840ae2bb1d96aca93d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1127577517218737577
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1127577517218737588}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f92622fb170a327458b5b82e3b914da5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1127577517218737578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,13 +90,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 680595125022526537, guid: a5b83bfdd88ba68458bc8e602397dc1b,
     type: 3}
-  borders: 0200000003000000
+  borders: 02000000
   enemyTrajectories:
-  - {x: 10, y: 11, z: 0}
-  - {x: 10, y: 17, z: 0}
-  - {x: 5, y: 11, z: 0}
-  - {x: 5, y: 13, z: 0}
-  - {x: 9, y: 13, z: 0}
+  - {x: 1, y: 1, z: 0}
+  - {x: 1, y: 4, z: 0}
 --- !u!1 &1127577518820419190
 GameObject:
   m_ObjectHideFlags: 0
