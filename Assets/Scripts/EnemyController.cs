@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum EnemyStates
+{
+    Move = 0,
+    Pause,
+    Attacking
+}
+
 public class EnemyController : MonoBehaviour
 {
-    //public Transform[] pointsArray;
     private int currentPointID;
-    public float MoveSpeed;
+    [SerializeField]
+    private float MoveSpeed;
     private float speedDelta;
     private int direction;
     private Transform enemyTransform;
@@ -25,14 +32,6 @@ public class EnemyController : MonoBehaviour
         enemyTransform = GetComponent<Transform>();
         direction = 1;
 
-        /*vectorsArray = new Vector3[pointsArray.Length];
-
-        for (int i=0; i < pointsArray.Length; i++)
-        {
-            vectorsArray[i] = pointsArray[i].position;
-        }
-
-        */
         enemyTransform.position = vectorsArray[0];
     }
     private void FixedUpdate()
@@ -61,13 +60,11 @@ public class EnemyController : MonoBehaviour
     }
     public void EnemyPause()
     {
-        Debug.Log("Pause");
         currentState = EnemyStates.Pause;
         animator.speed = 0;
     }
     public void EnemyUnpause()
     {
-        Debug.Log("Unpause");
         currentState = EnemyStates.Move;
         animator.speed = 1;
     }

@@ -22,4 +22,8 @@ public class LevelMenuButtons : MonoBehaviour
         var currentScene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(currentScene.name);
     }
+    public void Respawn()
+    {
+        GameManager.Instance.FindPlayer().Respawn();
+    }
 }

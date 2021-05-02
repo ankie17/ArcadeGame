@@ -4,22 +4,30 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
-    public float MoveSpeed = 5.0f;
+    [SerializeField]
+    private float MoveSpeed = 5.0f;
     private bool paused;
     private Vector3 spawnPosition;
+    [SerializeField]
+    private PlayerMode mode;
     private PlayerStates currentState = PlayerStates.Idle;
     private PlayerStates previousState;
     private float horizontalInput;
     private float verticalInput;
-    public GameObject Sprite;
+    [SerializeField]
+    private GameObject Sprite;
     private Rigidbody2D rb;
-    public WallChecker wc;
+    [SerializeField]
+    private WallChecker wc;
     private int stateID;
     private Animator animator;
-    public GameObject PlayerDeathPrefab;
-
-
+    [SerializeField]
+    private GameObject PlayerDeathPrefab;
+    enum PlayerMode
+    {
+        Normal,
+        AI
+    }
     enum PlayerStates
     {
         Idle = 0,
@@ -79,7 +87,6 @@ public class PlayerController : MonoBehaviour
         var s = Instantiate(PlayerDeathPrefab, this.transform.position, Quaternion.identity);
         Destroy(s, 1.0f);
     }
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (paused)
@@ -89,7 +96,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            //получить инпут стрелки с клавиатуры
             if (currentState != PlayerStates.Pause)
             {
                 horizontalInput = Input.GetAxis("Horizontal");
@@ -99,7 +105,6 @@ public class PlayerController : MonoBehaviour
                     verticalInput = 0;
                 }
             }
-            //изменить направление движения
             if (horizontalInput < 0 && wc.Left)
             {
                 currentState = PlayerStates.Left;
@@ -116,7 +121,6 @@ public class PlayerController : MonoBehaviour
             {
                 currentState = PlayerStates.Top;
             }
-            //изменить координату объект, передвинув его на несколько условных единиц
             Vector3 moveVector = Vector3.zero;
             if (currentState == PlayerStates.Top)
             {
@@ -137,6 +141,7 @@ public class PlayerController : MonoBehaviour
 
             moveVector = moveVector * MoveSpeed;
 
+            if(mode!=PlayerMode.AI)
             rb.velocity = moveVector;
         }
     }

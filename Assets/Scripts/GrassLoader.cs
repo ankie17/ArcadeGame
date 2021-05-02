@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class GrassLoader : MonoBehaviour
 {
+    [SerializeField]
     private Sprite[] grassSprites = new Sprite[4];
     private int counter = 0;
 
     [ContextMenu("LoadGrass")]
-    void LoadGrass()
+    public void LoadGrass()
     {
         for (int i = 0; i < 4; i++)
         {

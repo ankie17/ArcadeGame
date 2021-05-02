@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/AwakeScene.unity
+    guid: 46b994229ecf66b44a8340b85b4f5320
+  - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 1a3267a67fa8ba349b1daaeb58175226
   - enabled: 1
@@ -47,4 +50,22 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Outro.unity
     guid: f3f773e9f1f0a3f4eb4612f6bfe5feee
+  - enabled: 1
+    path: Assets/Scenes/AILevelTest.unity
+    guid: ab413190a1581f4488887be30d72e128
+  - enabled: 1
+    path: Assets/Scenes/ChooseLevelScene.unity
+    guid: 4d4e4bed2efbc5d40abc7492c24355ea
+  - enabled: 1
+    path: Assets/Scenes/levelEasy.unity
+    guid: ae085727cb6810541aa4987a7d8787d8
+  - enabled: 1
+    path: Assets/Scenes/levelMedium.unity
+    guid: febe39dba6c71d543832d9c5ec89a0a5
+  - enabled: 1
+    path: Assets/Scenes/levelHard.unity
+    guid: 9dbcac1f437423b4493c1c9024f5ed18
+  - enabled: 1
+    path: Assets/Scenes/demon.unity
+    guid: b82b3c21b845ca94d81363b4508d2827
   m_configObjects: {}

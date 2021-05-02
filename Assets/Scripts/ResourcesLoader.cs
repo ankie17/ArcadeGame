@@ -44,12 +44,10 @@ public class ResourcesLoader : MonoBehaviour
     }
     void FinishTexturesRequest(IAsyncResult result)
     {
-        //webRequest.EndGetResponse(result).GetResponseStream();
         using (var streamReader = new StreamReader(webRequest.EndGetResponse(result).GetResponseStream()))
         {
             response = streamReader.ReadToEnd();
         }
-        //StartCoroutine(ParseDataAndCreateBrickTextures());
         received = true;
     }
     void ParseDataAndCreateTextures()

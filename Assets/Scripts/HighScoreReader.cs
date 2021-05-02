@@ -12,19 +12,52 @@ public class HighScoreReader : MonoBehaviour
         public int minutes;
         public int seconds;
     }
-    
-    string TABLE_PATH = "PlayerStatsTable.txt";
-    string tableText = "";
-    private List<Stats> stats;
-    public GameObject textbox;
-    void Start()
+
+    private const string CAMPAIGN_PATH = "Tables\\storyline.txt";
+    private const string EASY_PATH = "Tables\\easy.txt";
+    private const string MEDIUM_PATH = "Tables\\medium.txt";
+    private const string HARD_PATH = "Tables\\hard.txt";
+
+    private List<Stats> stats = new List<Stats>();
+    [SerializeField]
+    private Text easyTextBox;
+    [SerializeField]
+    private Text mediumTextBox;
+    [SerializeField]
+    private Text hardTextBox;
+    [SerializeField]
+    private Text campaignTextBox;
+    private void Start()
     {
-        stats = new List<Stats>();
-        ReadAndSortTable();
+        easyTextBox.text = ReadSortAndWriteTable(1);
+        mediumTextBox.text = ReadSortAndWriteTable(2);
+        hardTextBox.text = ReadSortAndWriteTable(3);
+
+        campaignTextBox.text = ReadCampaignTable();
     }
-    void ReadAndSortTable()
+    private string ReadCampaignTable()
     {
-        StreamReader reader = new StreamReader(TABLE_PATH, true);
+        string result = "";
+        StreamReader reader = new StreamReader(CAMPAIGN_PATH, true);
+        while (!reader.EndOfStream)
+        {
+            result += reader.ReadLine() + "\n";
+        }
+            return result;
+    }
+    private string ReadSortAndWriteTable(int id)
+    {
+        string result = "";
+        string path;
+
+        if (id == 1)
+            path = EASY_PATH;
+        else if (id == 2)
+            path = MEDIUM_PATH;
+        else
+            path = HARD_PATH;
+
+        StreamReader reader = new StreamReader(path, true);
         while (!reader.EndOfStream)
         {
             Stats stat;
@@ -45,14 +78,16 @@ public class HighScoreReader : MonoBehaviour
                           select s;
 
         stats = sortedTable.ToList();
-        
-        foreach(var s in stats)
+
+        foreach (var s in stats)
         {
             string st = "";
             st = s.name + " " + s.minutes + "m " + s.seconds + "s";
-            tableText += st + "\n";
+            result += st + "\n";
         }
 
-        textbox.GetComponent<Text>().text = tableText;
+        stats = new List<Stats>();
+
+        return result;
     }
 }

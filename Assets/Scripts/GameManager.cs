@@ -1,30 +1,31 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameMode
+    private enum GameMode
     {
         Normal,
         AI
     }
-
-    public GameMode gameMode;
+    [SerializeField]
+    private GameMode gameMode;
     public int levelId;
     private static GameManager instance;
-    public int PlayerMaxLives;
+    [SerializeField]
+    private int PlayerMaxLives;
     private int playerCurrentLives;
-    public int StarsQuantity;
-    private GameObject player;
+    [SerializeField]
+    private int StarsQuantity;
     private GameObject heart;
+    public GameObject player;
     private LevelTimer timer;
     private FXManager fXManager;
     private HighScoreTableWriter tableWriter;
-    public GameObject respawnMenu;
+    [SerializeField]
+    private GameObject respawnMenu;
     public static GameManager Instance { get { return instance; } }
-
 
     private void Awake()
     {
@@ -36,12 +37,17 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
-
-        FindAndAssignKeyGameObjects();
+        if (gameMode == GameMode.Normal)
+            FindAndAssignKeyGameObjects();
+        else
+        {
+            FindObjectOfType<LevelBuilder>().Prepare();
+        }
     }
-    private void FindAndAssignKeyGameObjects()
+    public void FindAndAssignKeyGameObjects()
     {
         fXManager = FindObjectOfType<FXManager>();
+
         player = GameObject.FindGameObjectWithTag("Player");
 
         heart = GameObject.FindGameObjectWithTag("Heart");
@@ -55,7 +61,6 @@ public class GameManager : MonoBehaviour
 
         playerCurrentLives = PlayerMaxLives;
 
-        //write progress
         PlayerPrefs.SetInt("CurrentLevelId", levelId);
         PlayerPrefs.Save();
     }
@@ -69,15 +74,12 @@ public class GameManager : MonoBehaviour
         }
         if (StarsQuantity == 0)
         {
-            //complete level
             fXManager.PlayOneShot(3);
-            Debug.Log("Level complete");
             
             GameEnd(true);
         }
         if (StarsQuantity == 1)
         {
-            //activate heart
             ActivateHeart();
         }
     }
@@ -87,22 +89,18 @@ public class GameManager : MonoBehaviour
         if (playerCurrentLives > 0)
         {
             player.GetComponent<PlayerController>().PlayDead(true);
-            Debug.Log("respawn menu");
             respawnMenu.SetActive(true);
         }
         else
         {
-            //player dead
-            //loose sound
             fXManager.PlayOneShot(2);
             player.GetComponent<PlayerController>().PlayDead(false);
             GameEnd(false);
         }
     }
-
     public void PauseGame()
     {
-        if (player != null)
+        if (player.GetComponent<PlayerController>()!= null)
         {
             player.GetComponent<PlayerController>().PausePlayer();
         }
@@ -125,11 +123,11 @@ public class GameManager : MonoBehaviour
             aiManager.Paused = true;
         } 
 
-        timer.switchStates();
+        timer.SwitchStates();
     }
     public void ResumeGame()
     {
-        if (player != null)
+        if (player.GetComponent<PlayerController>() != null)
         {
             player.GetComponent<PlayerController>().UnpausePlayer();
         }
@@ -152,24 +150,26 @@ public class GameManager : MonoBehaviour
             aiManager.Paused = false;
         }
 
-        timer.switchStates();
+        timer.SwitchStates();
     }
-
-    public void GameEnd(bool result)
+    public PlayerController FindPlayer()
+    {
+        return player.GetComponent<PlayerController>();
+    }
+    private void GameEnd(bool result)
     {
         if (result)
         {
             PauseGame();
             player.SetActive(false);
-            //запустить окно ввода никнейма
-            if (levelId == 10)
+
+            if (levelId == 10||gameMode==GameMode.AI)
             {
                 var menu = FindObjectOfType<NicknameMenu>();
-                menu.nickNameMenu.SetActive(true);
+                menu.NickNameMenu.SetActive(true);
             }
             else
             {
-                //level transition
                 StartCoroutine(LevelTransition());
             }
         }
@@ -181,7 +181,11 @@ public class GameManager : MonoBehaviour
     private IEnumerator LevelTransition()
     {
         yield return new WaitForSeconds(2.0f);
-        SceneManager.LoadScene($"level{levelId + 1}");
+
+        if (gameMode == GameMode.Normal)
+            SceneManager.LoadScene($"level{levelId + 1}");
+        else
+            SceneManager.LoadScene("MainMenu");
     }
     private IEnumerator LevelReload()
     {
@@ -191,16 +195,39 @@ public class GameManager : MonoBehaviour
     }
     public void LogPlayerStats(string name)
     {
-        tableWriter.WritePlayerStats(name, (int)timer.levelTime);
+        int time = (int)timer.levelTime;
 
-        SceneManager.LoadScene("Outro");
+        if (gameMode == GameMode.Normal)
+        {
+            tableWriter.WritePlayerStats(name, 0, time);
+            SceneManager.LoadScene("Outro");
+        }
+        else
+        {
+            var difficulty = FindObjectOfType<LevelBuilder>().difficulty;
+
+            if (difficulty == LevelDifficulty.easy)
+            {
+                tableWriter.WritePlayerStats(name, 1, time);
+            }
+            else if (difficulty == LevelDifficulty.medium)
+            {
+                tableWriter.WritePlayerStats(name, 2, time);
+            }
+            else
+            {
+                tableWriter.WritePlayerStats(name, 3, time);
+            }
+
+            StartCoroutine(LevelTransition());
+        }
     }
     public void HeartPickup()
     {
         fXManager.PlayOneShot(0);
         playerCurrentLives++;
     }
-    public void ActivateHeart()
+    private void ActivateHeart()
     {
         heart.SetActive(true);
     }

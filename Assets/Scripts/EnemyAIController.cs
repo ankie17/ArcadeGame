@@ -9,14 +9,8 @@ public class EnemyAIController : MonoBehaviour
     public int Id;
     public double[,] ValueMatrix = new double[20, 20];
     public int posX, posY;
-    public Vector3 target;
+    private Vector3 target;
     public float moveSpeed = 5f;
-    public double top;
-    public double down;
-    public double left;
-    public double right;
-    public double middle;
-
     private EnemyStates currentState;
     private Animator animator;
     private void Start()
@@ -45,72 +39,35 @@ public class EnemyAIController : MonoBehaviour
             else //если целые то вычислить следующую точку
             {
                 FindTarget();
-                FindPlayerPos();
             }
         }
-    }
-    private void FindPlayerPos()
-    {
-        double max=-999.0;
-        int x = 0;
-        int y = 0;
-        //int counter = 0;
-        for(int i = 0; i < 20; i++)
-        {
-            for(int j = 0; j < 20; j++)
-            {
-                if (ValueMatrix[i, j] > max)
-                {
-                    max = ValueMatrix[i, j];
-                    x = j;
-                    y = i;
-                }
-            }
-        }
-        print($"player position {x},{y}");
     }
     private void FindTarget()
     {
         List<Tuple<int, double>> values = new List<Tuple<int, double>>();
-        {
-            //middle = ValueMatrix[posY, posX];
-            right = ValueMatrix[posY, posX + 1];
-            left = ValueMatrix[posY, posX - 1];
-            top = ValueMatrix[posY - 1, posX];
-            down = ValueMatrix[posY + 1, posX];
-            //top is down down is top?
-        }
-        //values.Add(new Tuple<int, double>(0, ValueMatrix[posY, posX]));//middle value
         values.Add(new Tuple<int, double>(1, ValueMatrix[posY, posX + 1]));//right value
         values.Add(new Tuple<int, double>(2, ValueMatrix[posY, posX - 1]));//left value
         values.Add(new Tuple<int, double>(3, ValueMatrix[posY - 1, posX]));//top value
         values.Add(new Tuple<int, double>(4, ValueMatrix[posY + 1, posX]));//down value
-        foreach(var v in values)
-        {
-            //print($"index {v.Item1} value {v.Item2}");
-        }
-        List<int> maxIndexes = new List<int>(); //индексы максимальных значений
+        List<int> maxIndexes = new List<int>();
 
-        //сортируем по возрастанию
         values = (from v in values
                   orderby v.Item2 descending
                   select v).ToList();
 
-        double maxValue = values[0].Item2; //по умолчанию максимальное значение первое
-        print(maxValue);
-        foreach (var v in values) //в цикле добавляем индексы если есть клетки с таким же значением
+        double maxValue = values[0].Item2;
+        
+        foreach (var v in values)
         {
             if (v.Item2 == maxValue)
                 maxIndexes.Add(v.Item1);
         }
 
-        //select random index from list
-
         int random = UnityEngine.Random.Range(0, maxIndexes.Count - 1);
 
-        int index = maxIndexes[random]; //присваиваем индекс
+        int index = maxIndexes[random];
 
-        Vector3 newTarget = target; //в зависимости от индекса клетки будем менять координаты сл. цели
+        Vector3 newTarget = target; 
 
         if (index == 1)
         {
@@ -128,16 +85,9 @@ public class EnemyAIController : MonoBehaviour
         {
             newTarget.y -= 1;
         }
-        //newTarget.y = MirrorByMiddle(newTarget.y);
-        //newTarget.x = MirrorByMiddle(newTarget.x);
+
         target = newTarget;
     }
-    /*private void FindTarget() 
-    {
-        List<Tuple<int, double>> values = new List<Tuple<int, double>>();
-
-        var middleVal = ValueMatrix[posY][posX]
-    }*/
     private int MirrorYByMiddle(int y)
     {
         int mirrored = 19 - y;
@@ -167,18 +117,14 @@ public class EnemyAIController : MonoBehaviour
             posY = Mathf.FloorToInt(transform.position.y);
         }
         posY = MirrorYByMiddle(posY);
-        //print(posX);
-        //print(posY);
     }
     public void EnemyPause()
     {
-        Debug.Log("Pause");
         currentState = EnemyStates.Pause;
         animator.speed = 0;
     }
     public void EnemyUnpause()
     {
-        Debug.Log("Unpause");
         currentState = EnemyStates.Move;
         animator.speed = 1;
     }
@@ -192,10 +138,11 @@ public class EnemyAIController : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.tag=="Player")
         {
             GameManager.Instance.PlayerHurt();
             animator.SetTrigger("Attack");
         }
+        
     }
 }

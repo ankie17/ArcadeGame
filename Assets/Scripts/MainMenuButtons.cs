@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 public class MainMenuButtons : MonoBehaviour
 {
-    public GameObject aboutText;
-    public GameObject continueCampaighButton;
+    [SerializeField]
+    private GameObject aboutText;
+    [SerializeField]
+    private GameObject continueCampaighButton;
     private void Start()
     {
         if (!PlayerPrefs.HasKey("CurrentLevelId"))
@@ -36,5 +35,13 @@ public class MainMenuButtons : MonoBehaviour
     public void AboutText()
     {
         aboutText.SetActive(!aboutText.activeInHierarchy);
+    }
+    public void LoadAILevel()
+    {
+        SceneManager.LoadScene("ChooseLevelScene");
+    }
+    public void DemoMode()
+    {
+        SceneManager.LoadScene("demon");
     }
 }

@@ -12,7 +12,6 @@ public class Star : MonoBehaviour
             GameManager.Instance.StarPickup();
         }
     }
-
     public Vector2 GetStarPos()
     {
         Vector2 pos = new Vector2();

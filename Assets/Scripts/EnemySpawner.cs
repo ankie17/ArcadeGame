@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject enemyPrefab;
-    public int[] borders;
-    public Vector3[] enemyTrajectories;
-    // Start is called before the first frame update
+    [SerializeField]
+    private GameObject enemyPrefab;
+    [SerializeField]
+    private int[] borders;
+    [SerializeField]
+    private Vector3[] enemyTrajectories;
     void Awake()
     {
         int i = 0;

@@ -5,11 +5,14 @@ using UnityEngine.UI;
 
 public class VolumeChanger : MonoBehaviour
 {
-    public Slider musicSlider;
-    public Slider oneshotSlider;
-    public AudioSource audioSource;
-    private string mv = "MusicVolume";
-    private string ov = "OneShotVolume";
+    [SerializeField]
+    private Slider musicSlider;
+    [SerializeField]
+    private Slider oneshotSlider;
+    [SerializeField]
+    private AudioSource audioSource;
+    private const string mv = "MusicVolume";
+    private const string ov = "OneShotVolume";
     void Start()
     {
         if (PlayerPrefs.HasKey(mv))
@@ -18,8 +21,6 @@ public class VolumeChanger : MonoBehaviour
         if (PlayerPrefs.HasKey(ov))
             oneshotSlider.value = PlayerPrefs.GetFloat(ov);
     }
-
-    // Update is called once per frame
     void Update()
     {
         ChangeMusicVolumeValue();

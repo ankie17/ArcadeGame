@@ -16,7 +16,6 @@ public class LevelMatrix
     }
     public string GetJsonString()
     {
-        //return JsonUtility.ToJson(this);
         return JsonConvert.SerializeObject(this);
     }
 }

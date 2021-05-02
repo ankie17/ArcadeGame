@@ -5,13 +5,32 @@ using UnityEngine;
 
 public class HighScoreTableWriter : MonoBehaviour
 {
-    private string TABLE_PATH = "PlayerStatsTable.txt";
-    public void WritePlayerStats(string playerName, int levelTime)
+    private const string CAMPAIGN_PATH = "Tables\\storyline.txt";
+    private const string EASY_PATH = "Tables\\easy.txt";
+    private const string MEDIUM_PATH = "Tables\\medium.txt";
+    private const string HARD_PATH = "Tables\\hard.txt";
+    public void WritePlayerStats(string playerName, int tableID, int levelTime)
     {
-        //в конец файла записать статистику игрока
-        StreamWriter writer = new StreamWriter(TABLE_PATH, true);
+        string path;
+        string logLine = playerName + " " + levelTime;
+
+        if (tableID == 0)
+        {
+            path = CAMPAIGN_PATH;
+            logLine = playerName;
+        }
+        else if (tableID == 1)
+        {
+            path = EASY_PATH;
+        }
+        else if (tableID == 2)
+            path = MEDIUM_PATH;
+        else
+            path = HARD_PATH;
+
+        StreamWriter writer = new StreamWriter(path, true);
         
-        writer.WriteLine(playerName + " " + levelTime);
+        writer.WriteLine(logLine);
 
         writer.Close();
     }

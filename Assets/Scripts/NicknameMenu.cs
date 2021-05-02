@@ -7,10 +7,10 @@ public class NicknameMenu : MonoBehaviour
 {
     [SerializeField]
     private InputField inputField;
-    public GameObject nickNameMenu;
+    public GameObject NickNameMenu;
     private void Start()
     {
-        nickNameMenu.SetActive(false);
+        NickNameMenu.SetActive(false);
     }
     public void CheckInputField()
     {

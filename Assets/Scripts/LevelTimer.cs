@@ -5,14 +5,11 @@ using UnityEngine;
 public class LevelTimer : MonoBehaviour
 {
     public float levelTime;
-    public bool running;
-    // Start is called before the first frame update
+    private bool running;
     void Start()
     {
         levelTime = 0;
     }
-
-    // Update is called once per frame
     void Update()
     {
         if (running)
@@ -21,7 +18,7 @@ public class LevelTimer : MonoBehaviour
         }
     }
 
-    public void switchStates()
+    public void SwitchStates()
     {
         running = !running;
     }

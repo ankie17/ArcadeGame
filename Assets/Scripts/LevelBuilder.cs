@@ -1,52 +1,67 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.IO; 
 using UnityEngine;
 using System;
 
-[ExecuteInEditMode]
+public enum LevelDifficulty
+{
+    easy,
+    medium,
+    hard
+}
 public class LevelBuilder : MonoBehaviour
 {
-    public enum LevelBuilderMode
+    enum LevelBuilderMode
     {
         Manual,
         Request
     }
-    public GrassLoader grassLoader;
-    public LevelBuilderMode builderMode = LevelBuilderMode.Manual;
-    public const int LEVEL_SIZE = 20;
+    [SerializeField]
+    private GrassLoader grassLoader;
+    public LevelDifficulty difficulty;
+    [SerializeField]
+    private LevelBuilderMode builderMode = LevelBuilderMode.Manual;
     private int[,] levelMatrix;
-    public string MatrixString = "";
-    public GameObject wall;
-    public GameObject floor;
-    public GameObject star;
-    public GameObject heart;
+    [SerializeField]
+    private string MatrixString = "";
+    [SerializeField]
+    private GameObject wallPrefab;
+    [SerializeField]
+    private GameObject floorPrefab;
+    [SerializeField]
+    private GameObject starPrefab;
+    [SerializeField]
+    private GameObject heartPrefab;
+    [SerializeField]
+    private GameObject playerPrefab;
     private Vector3 startPos;
 
     #region constants
-    /*
-     * 0-пол
-1-стена
-2-игрок
-3-4-5 -враги
-6-звезды
-7-сердечко
-     */
+    private const int LEVEL_SIZE = 20;
     const int floorID = 0;
     const int wallID = 1;
     const int starID = 6;
     const int heartID = 7;
     #endregion
-
+    public void Prepare()
+    {
+        if (builderMode == LevelBuilderMode.Request)
+        {
+            GenerateLevel();
+        }
+    }
     [ContextMenu("GenerateLevel")]
     public void GenerateLevel()
     {
-        //получить от микросервиса строку с матрицей
         startPos = transform.position;
         GenerateMatrix();
+        grassLoader.LoadGrass();
         BuildLevel();
+        SpawnPlayer();
+        FindObjectOfType<AIManager>().SpawnEnemies();
+        GameManager.Instance.FindAndAssignKeyGameObjects();
     }
     private void GenerateMatrix()
     {
@@ -58,79 +73,8 @@ public class LevelBuilder : MonoBehaviour
         ParseMatrix();
         GeneratePickupCoordinates();
     }
-    [ContextMenu("DestroyChilds")]
-    public void DestroyChilds()
-    {
-        foreach (Transform c in transform)
-        {
-            DestroyImmediate(c.gameObject);
-        }
-    }
-    private void FixedUpdate()
-    {
-        //Debug.Log(gameObject.transform.childCount);
-    }
-    /*public LevelMatrix GetLevelMatrix()
-    {
-        GenerateMatrix();
-
-        int[][] m = new int[20][];
-        for (int i = 0; i < 20; i++)
-        {
-            m[i] = new int[20];
-            for (int j = 0; j < 20; j++)
-            {
-                int id = levelMatrix[i, j];
-                if (id==6||id==7) //delete old pickup coords, we will find it later
-                    id = 0;
-                m[i][j] = id;
-
-            }
-        }
-        //find pickup coords
-        var stars = FindObjectsOfType<Star>();
-        if (stars.Length > 0)//if they exist
-        {
-            //write to matrix
-            foreach (var s in stars)
-            {
-                var pos = s.GetStarPos();
-                int x = (int)pos.x;
-                int y = MirrorYByMiddle((int)pos.y);
-                m[y][x] = 6;
-            }
-        }
-
-        //find heart coords
-        var heart = FindObjectOfType<Heart>();
-        if (heart != null)//if it exists
-        {
-            //write to matrix
-            var pos = heart.GetHeartPos();
-            int x = (int)pos.x;
-            int y = MirrorYByMiddle((int)pos.y);
-            m[y][x] = 7;
-        }
-        
-        //find enemies and write their coords
-        foreach(var e in FindObjectsOfType<EnemyAIController>())
-        {
-            m[e.posY][e.posX] = e.Id;
-        }
-
-        //find player and write his coords
-        Vector2 playerPos = FindObjectOfType<PlayerController>().GetPlayerPos();
-        m[MirrorYByMiddle((int)playerPos.y)][(int)playerPos.x] = 2; //player ID=2
-
-        //create level matrix object and write to it
-        LevelMatrix lm = new LevelMatrix();
-        lm.level_matrix = m;
-        return lm;
-    }*/
     public LevelMatrix GetLevelMatrix()
     {
-        GenerateMatrix();
-
         int[][] m = new int[20][];
         for (int i = 0; i < 20; i++)
         {
@@ -231,9 +175,8 @@ public class LevelBuilder : MonoBehaviour
         int mirrored = 19 - y;
         return mirrored;
     }
-    public void ParseMatrix()
+    private void ParseMatrix()
     {
-        //нужно пропарсить стринг
         int counter = 0;
         foreach (char c in MatrixString)
         {
@@ -257,7 +200,7 @@ public class LevelBuilder : MonoBehaviour
 
         httpRequest.ContentType = "application/x-www-form-urlencoded";
 
-        var data = "level=easy";
+        var data = "level="+difficulty.ToString();
 
         using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
         {
@@ -284,34 +227,34 @@ public class LevelBuilder : MonoBehaviour
 
                     if (levelMatrix[i, j] == floorID)
                     {
-                        var cell = Instantiate(floor, currentPos, Quaternion.identity);
+                        var cell = Instantiate(floorPrefab, currentPos, Quaternion.identity);
                         //set grass sprite
                         cell.GetComponent<SpriteRenderer>().sprite = grassLoader.GetGrassSprite();
                         cell.transform.parent = gameObject.transform;
                     }
                     else if (levelMatrix[i, j] == wallID)
                     {
-                        var cell = Instantiate(wall, currentPos, Quaternion.identity);
+                        var cell = Instantiate(wallPrefab, currentPos, Quaternion.identity);
                         cell.transform.parent = gameObject.transform;
                     }
                     else if (levelMatrix[i, j] == starID)
                     {
                         //spawn star
-                        var cell = Instantiate(star, currentPos, Quaternion.identity);
+                        var cell = Instantiate(starPrefab, currentPos, Quaternion.identity);
                         cell.transform.parent = gameObject.transform;
                         
-                        var v = Instantiate(floor, currentPos, Quaternion.identity);
+                        var v = Instantiate(floorPrefab, currentPos, Quaternion.identity);
                         v.transform.parent = gameObject.transform;
                         v.GetComponent<SpriteRenderer>().sprite = grassLoader.GetGrassSprite();
                     }
                     else if (levelMatrix[i, j] == heartID)
                     {
                         //spawn heart
-                        var heratCell = Instantiate(heart, currentPos, Quaternion.identity);
+                        var heratCell = Instantiate(heartPrefab, currentPos, Quaternion.identity);
                         heratCell.transform.parent = gameObject.transform;
                         
                         //heratCell.SetActive(false);
-                        var v = Instantiate(floor, currentPos, Quaternion.identity);
+                        var v = Instantiate(floorPrefab, currentPos, Quaternion.identity);
                         v.transform.parent = gameObject.transform;
                         v.GetComponent<SpriteRenderer>().sprite = grassLoader.GetGrassSprite();
                     }
@@ -321,40 +264,39 @@ public class LevelBuilder : MonoBehaviour
     }
     void GeneratePickupCoordinates()
     {
-        var rnd = new System.Random();
-        List<int> lst = new List<int>();
+        int[][] starPositions = new int[3][];
+        starPositions[0] = GenerateRandomCoordinateInRange(11, 17, 2, 9);
+        starPositions[1] = GenerateRandomCoordinateInRange(11, 17, 11, 17);
+        starPositions[2] = GenerateRandomCoordinateInRange(2, 9, 2, 9);
+        var heartPos = GenerateRandomCoordinateInRange(2, 17, 2, 17);
 
-        for(int i = 0; i < 4; i++)
+        foreach(var sp in starPositions)
         {
-            //cгенерировать случайное число от 0 до 399
-            int val = 0;
-            int rowID = 0;
-            int columnID = 0;
-            do
-            {
-                val = rnd.Next(0, 400);
-                rowID = val / LEVEL_SIZE;
-                columnID = val % LEVEL_SIZE;
-            } while (levelMatrix[rowID, columnID] == 1 || lst.Contains(val));
-            //проверить является ли оно стеной или звездочкой
-            lst.Add(val);
+            levelMatrix[sp[0], sp[1]] = starID;
+        }
+
+        levelMatrix[heartPos[0], heartPos[1]] = heartID;
+    }
+    int[] GenerateRandomCoordinateInRange(int minX, int maxX, int minY, int maxY)
+    {
+        while (true)
+        {
             
-            //найти соответствующие координаты матрице уровня
-            //и записать это число туда
-        }
-        for(int i = 0; i < 4; i++)
-        {
-            int val = lst[i];
-            int rowID = val / LEVEL_SIZE;
-            int columnID = val % LEVEL_SIZE;
-            if (i == 3)
+            int posX = UnityEngine.Random.Range(minX, maxX + 1);
+            int posY = UnityEngine.Random.Range(minY, maxY + 1);
+            if (levelMatrix[posY, posX] == 0)
             {
-                levelMatrix[rowID, columnID] = heartID;
-            }
-            else
-            {
-                levelMatrix[rowID, columnID] = starID;
+                int[] result = { posY, posX };
+                return result;
             }
         }
+    }
+    void SpawnPlayer()
+    {
+        var playerCoord = GenerateRandomCoordinateInRange(2, 6, 12, 16);
+        Vector3 playerPos = new Vector3(playerCoord[1], MirrorYByMiddle(playerCoord[0]), 0);
+        var player = Instantiate(playerPrefab, playerPos, Quaternion.identity);
+        if (player == null)
+        GameManager.Instance.player = player;
     }
 }
