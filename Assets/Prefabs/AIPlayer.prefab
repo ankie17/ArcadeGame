@@ -238,7 +238,7 @@ MonoBehaviour:
   orientation: 1
   enableRotation: 0
   targetCompatibility: {fileID: 0}
-  maxAcceleration: 999999
+  maxAcceleration: 100000
   rotationSpeed: 360
   slowdownDistance: 0
   pickNextWaypointDist: 2

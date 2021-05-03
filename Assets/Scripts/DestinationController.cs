@@ -18,7 +18,10 @@ public class DestinationController : MonoBehaviour
         {
             float dist = Vector3.Distance(s.transform.position, transform.position);
             if (dist < minDist)
+            {
                 closestID = counter;
+                minDist = dist;
+            }
             counter++;
         }
 

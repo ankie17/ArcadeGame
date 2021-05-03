@@ -8,6 +8,7 @@ public class LevelTimer : MonoBehaviour
     private bool running;
     void Start()
     {
+        running = true;
         levelTime = 0;
     }
     void Update()
